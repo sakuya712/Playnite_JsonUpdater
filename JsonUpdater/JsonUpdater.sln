@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonUpdater", "JsonUpdater\JsonUpdater.csproj", "{378FF9A1-4FD1-4639-BF2E-57FEC692035B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{378FF9A1-4FD1-4639-BF2E-57FEC692035B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{378FF9A1-4FD1-4639-BF2E-57FEC692035B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{378FF9A1-4FD1-4639-BF2E-57FEC692035B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{378FF9A1-4FD1-4639-BF2E-57FEC692035B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9983057D-77C7-410A-8CC6-D9A12AE6A372}
+	EndGlobalSection
+EndGlobal
