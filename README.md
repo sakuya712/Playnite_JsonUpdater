@@ -1,0 +1,2 @@
+# Playnite_JsonUpdater
+Playniteに登録するタグを自動化する
