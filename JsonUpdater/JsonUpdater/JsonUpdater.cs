@@ -20,7 +20,6 @@ namespace JsonUpdater
             public string circle { get; set; }
             public string release_date { get; set; }
             public string category { get; set; }
-            public string voice_actor { get; set; }
             public List<string> genre { get; set; }
             public string main_image_url { get; set; }
         }
@@ -47,9 +46,20 @@ namespace JsonUpdater
             private void UpdateGames()
             {
                 var games = PlayniteApi.Database.Games.ToList();
-
+                // tempフォルダ取得(ログ用)
+                string tempPath = Path.GetTempPath();
+                string logfile = Path.Combine(tempPath, "JsonUpdater.log");
+                File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] 更新開始 {Environment.NewLine}");
+                // ゲームごとに処理
                 foreach (var game in games)
                 {
+                    // 既に設定している場合はスキップ
+                    if (!string.IsNullOrEmpty(game.Description) && game.Description.Contains("[製品ID:"))
+                    {
+                        File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {game.Name}は既に設定されているためスキップ {Environment.NewLine}");
+                        continue;
+                    }
+                    File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {game.Name}の読込開始 {Environment.NewLine}");
                     // インストールディレクトリを取得
                     var gameDir = game.InstallDirectory;
                     if (string.IsNullOrEmpty(gameDir)) continue;
@@ -57,8 +67,18 @@ namespace JsonUpdater
                     var jsonFile = FindJsonFile(gameDir);
                     if (string.IsNullOrEmpty(jsonFile)) continue;
                     var jsonText = File.ReadAllText(jsonFile);
-                    var info = JsonConvert.DeserializeObject<JsonGameInfo>(jsonText);
+                    JsonGameInfo info = null;
+                    try
+                    {
+                        info = JsonConvert.DeserializeObject<JsonGameInfo>(jsonText);
+                    }
+                    catch (Exception)
+                    {
+                        File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] jsonファイルが正しくないためスキップ {Environment.NewLine}");
+                        continue;
+                    }
                     if (info is null) continue;
+                    File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] jsonファイル取込完了 {Environment.NewLine}");
                     // メタデータを更新
                     // タイトル
                     if (!string.IsNullOrEmpty(info.title))
@@ -134,7 +154,7 @@ namespace JsonUpdater
                         }
                     }
                     // 画像
-                    if (!string.IsNullOrEmpty(info.main_image_url))
+                    if (!string.IsNullOrEmpty(info.main_image_url) && info.main_image_url != "画像不明")
                     {
                         var imageUrl = DownloadImageToFile(info.main_image_url, gameDir);
                         string localImagePath = imageUrl;
@@ -144,6 +164,7 @@ namespace JsonUpdater
                     game.Description = $"[製品ID: {info.product_id}]\n[製品URL: {info.product_url}]";
                     // データベースを更新
                     PlayniteApi.Database.Games.Update(game);
+                    File.AppendAllText(logfile, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {game.Name}の更新完了 {Environment.NewLine}");
                 }
                 PlayniteApi.Dialogs.ShowMessage("更新完了", "Playnite JSON 更新");
             }
